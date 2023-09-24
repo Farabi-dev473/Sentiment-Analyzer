@@ -8,7 +8,7 @@ const connection = new Redis({
     maxRetriesPerRequest: null
 });
 
-// const db = new Redis(connection)
+const db = new Redis()
 
 
 new Worker('comment', async (job) => {
@@ -17,7 +17,8 @@ new Worker('comment', async (job) => {
     const comments = await getComments(link)
     console.log(comments[0])
     const sentiment = await getSentiment(comments.join(' '))
-    console.log(sentiment)
+    console.log(sentiment.score)
+    await db.set(link, sentiment.score)
     await setTimeout(4000)
 },{connection})
 
